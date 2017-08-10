@@ -13,14 +13,15 @@ echo
 ####MENU DE PROGRAMAS#####
 echo "::Digite o numero e tecle enter ou para cancelar feche no (X)::
 
-1-Instalar apache2
-2-Instalar mysql
-3-Instalar phpmyadmin 
-4-Instalar php5
-5-Instalar php7.0 - (servidores ubuntu 16.04)
-6-Instalar git
-7-Reiniciar o apache2
-8-Instalar vim"
+1-Update e upgrade
+2-Instalar apache2
+3-Instalar mysql
+4-Instalar phpmyadmin 
+5-Instalar php5
+6-Instalar php7.0 - (servidores ubuntu 16.04)
+7-Instalar git
+8-Reiniciar o apache2
+9-Instalar vim"
 
 echo 
 
@@ -28,12 +29,23 @@ echo
 read programas
 
 if [ "$programas" = "1" ];
-then  
-    echo "--- Iniciando Instalação apache ---"
-    sudo apt-get -y install apache2  
-    echo "--- Fim da intalação apache ---"
+then 
+    echo "--- Iniciando update ---"
+    sleep 3
+	sudo apt-get update 
+
+    echo "--- Iniciando upgrade ---"
+    sleep 3
+	sudo apt-get -y upgrade    
+    echo "--- Fim da Atualização---"
 
 elif [ "$programas" = "2" ];
+then
+    echo "--- Iniciando Instalação apache ---"
+    sudo apt-get -y install apache2  
+    echo "--- Fim da intalação apache ---"  
+
+elif [ "$programas" = "3" ];
 then
     echo "--- Instalando MySQL  ---"
     read -p "Entre com a senha Mysql somente uma vez e tecle Enter para continuar::" senha
@@ -42,7 +54,7 @@ then
     sudo apt-get -y install mysql-server    
     echo "--- Fim da instalação MySQL ---"   
 
-elif [ "$programas" = "3" ];
+elif [ "$programas" = "4" ];
 then
     echo "--- Instalando Phpmyadmin  ---"
     read -p "Entre com a senha PHPmyadmin somente uma vez e tecle Enter para continuar::" senha
@@ -54,7 +66,7 @@ then
     sudo apt-get -y install phpmyadmin
     echo "--- Fim da Instalação Phpmyadmin ---" 
 
-elif [ "$programas" = "4" ];
+elif [ "$programas" = "5" ];
 then
     echo "--- Instalando PHP 5  ---"
     sudo apt-get -y install php5 libapache2-mod-php5 php5-mcrypt
@@ -72,7 +84,7 @@ then
     echo "--- Fim da instalação PHP 5 ---"
     php -v  
 
-elif [ "$programas" = "5" ];
+elif [ "$programas" = "6" ];
 then
     echo "--- instalando php 7.0  ---"
     sleep 3
@@ -96,7 +108,7 @@ then
     echo "--- Fim da instalação PHP 7 ---" 
     php -v
 
-elif [ "$programas" = "6" ];
+elif [ "$programas" = "7" ];
 then
     echo "--- Instalando GIT  ---"
     sudo apt-get -y install git
@@ -107,13 +119,13 @@ then
 	git config --list
     echo "--- Fim da instalação do GIT  ---"
 
-elif [ "$programas" = "7" ];
+elif [ "$programas" = "8" ];
 then 
    echo "Reniciando Apache"
    sleep 3 
    sudo /etc/init.d/apache2 restart
 
-elif [ "$programas" = "8" ];
+elif [ "$programas" = "9" ];
 then 
    echo "Instalando vim" 
    sudo apt-get -y install vim
