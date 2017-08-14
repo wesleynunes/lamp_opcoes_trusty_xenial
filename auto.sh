@@ -21,7 +21,11 @@ echo "::Digite o numero e tecle enter ou para cancelar feche no (X)::
 6-Instalar php7.0 - (servidores ubuntu 16.04)
 7-Instalar git
 8-Reiniciar o apache2
-9-Instalar vim"
+9-Instalar vim
+10-Instalar composer
+11-Instalar Laravel
+12-configurar Host projeto laravel
+"
 
 echo 
 
@@ -130,7 +134,46 @@ then
    echo "Instalando vim" 
    sudo apt-get -y install vim
    echo "Fim da instalação vim" 
-   
+
+elif [ "$programas" = "10" ];
+then 
+   echo "Instalando composer" 
+   curl -s https://getcomposer.org/installer | php
+   mv composer.phar /usr/local/bin/composer
+   chmod +x /usr/local/bin/composer
+   echo "Fim da instalação composer" 
+
+elif [ "$programas" = "11" ];
+then 
+   echo "instalação Laravel" 
+   composer global require "laravel/installer"
+   echo "Inserir nome do projeto laravel" 
+   read -p "Entre com o nome do projeto::" projeto
+   composer create-project laravel/laravel "$projeto" "5.1.*"
+   sudo chmod -R 777 /var/www/html
+   echo "Fim da instalação Laravel" 
+
+elif [ "$programas" = "12" ];
+then 
+echo "--- configurar arquivo host ---"
+read -p "Entre com o nome do projeto::" projeto
+VHOST=$(cat <<EOF
+<VirtualHost *:80>
+    DocumentRoot "/var/www/html/${projeto}/public"
+    <Directory "/var/www/html/${projeto}/public">
+        AllowOverride All
+        Require all granted
+    </Directory>
+</VirtualHost>
+EOF
+)
+echo "${VHOST}" > /etc/apache2/sites-available/000-default.conf
+echo "--- habilitar mod-rewrite do apache ---"
+sudo a2enmod rewrite
+sudo a2ensite 000-default.conf
+sudo service apache2 reload
+composer show laravel/framework
+
 fi
 
 ####LOOP E VOLTA AO MENU#####
