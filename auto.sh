@@ -20,11 +20,10 @@ echo "::Digite o numero e tecle enter ou para cancelar feche no (X)::
 5-Instalar php5
 6-Instalar php7.0 - (servidores ubuntu 16.04)
 7-Instalar git
-8-Reiniciar o apache2
-9-Instalar vim
-10-Instalar composer
-11-Instalar Laravel
-12-configurar Host projeto laravel
+8-Instalar vim
+9-Instalar composer
+10-Instalar Laravel -(servidores ubuntu 14.04 e 16.04)
+11-Reiniciar o apache2
 "
 
 echo 
@@ -46,12 +45,14 @@ then
 elif [ "$programas" = "2" ];
 then
     echo "--- Iniciando Instalação apache ---"
+    sleep 3
     sudo apt-get -y install apache2  
     echo "--- Fim da intalação apache ---"  
 
 elif [ "$programas" = "3" ];
 then
     echo "--- Instalando MySQL  ---"
+    sleep 3
     read -p "Entre com a senha Mysql somente uma vez e tecle Enter para continuar::" senha
     sudo debconf-set-selections <<< "mysql-server mysql-server/root_password password $senha"
 	sudo debconf-set-selections <<< "mysql-server mysql-server/root_password_again password $senha"
@@ -61,6 +62,7 @@ then
 elif [ "$programas" = "4" ];
 then
     echo "--- Instalando Phpmyadmin  ---"
+    sleep 3
     read -p "Entre com a senha PHPmyadmin somente uma vez e tecle Enter para continuar::" senha
     sudo debconf-set-selections <<< "phpmyadmin phpmyadmin/dbconfig-install boolean true"
     sudo debconf-set-selections <<< "phpmyadmin phpmyadmin/app-password-confirm password $senha"
@@ -125,40 +127,44 @@ then
 
 elif [ "$programas" = "8" ];
 then 
-   echo "Reniciando Apache"
-   sleep 3 
-   sudo /etc/init.d/apache2 restart
-
-elif [ "$programas" = "9" ];
-then 
    echo "Instalando vim" 
    sudo apt-get -y install vim
    echo "Fim da instalação vim" 
 
-elif [ "$programas" = "10" ];
+elif [ "$programas" = "9" ];
 then 
    echo "Instalando composer" 
+   sleep 3 
    curl -s https://getcomposer.org/installer | php
-   mv composer.phar /usr/local/bin/composer
-   chmod +x /usr/local/bin/composer
+   sudo mv composer.phar /usr/local/bin/composer
+   sudo chmod +x /usr/local/bin/composer
    echo "Fim da instalação composer" 
 
-elif [ "$programas" = "11" ];
+elif [ "$programas" = "10" ];
 then 
-   echo "instalação Laravel" 
-   composer global require "laravel/installer"
-   echo "Inserir nome do projeto laravel" 
-   read -p "Entre com o nome do projeto::" projeto
-   composer create-project laravel/laravel "$projeto" "5.1.*"
-   sudo chmod -R 777 /var/www/html
-   echo "Fim da instalação Laravel" 
+    echo "instalação Laravel" 
+    sleep 3 
+    composer global require "laravel/installer"
+    echo "Inserir nome do projeto laravel" 
+    sleep 3 
+    read -p "Entre com o nome do projeto::" projeto
+    composer create-project laravel/laravel "$projeto" "5.1.*"
+    echo "Inserido permição na pasta" 
+    sleep 3 
+    sudo chmod -R 777 /var/www/html/"$projeto"
 
-elif [ "$programas" = "12" ];
-then 
 echo "--- configurar arquivo host ---"
-read -p "Entre com o nome do projeto::" projeto
+sleep 3 
+read -p "Entre com o hostname::" hostname
+sudo touch "$hostname" /etc/apache2/sites-available/
+
+echo "Editando arquivo host" 
+sleep 3 
 VHOST=$(cat <<EOF
 <VirtualHost *:80>
+    ServerAdmin wesleysilva.ti@gmail.comsleep 3 
+    ServerName  laravel.dev
+    ServerAlias laravel.dev
     DocumentRoot "/var/www/html/${projeto}/public"
     <Directory "/var/www/html/${projeto}/public">
         AllowOverride All
@@ -167,13 +173,28 @@ VHOST=$(cat <<EOF
 </VirtualHost>
 EOF
 )
-echo "${VHOST}" > /etc/apache2/sites-available/000-default.conf
-echo "--- habilitar mod-rewrite do apache ---"
-sudo a2enmod rewrite
-sudo a2ensite 000-default.conf
-sudo service apache2 reload
-composer show laravel/framework
+echo "${VHOST}" > /etc/apache2/sites-available/"$hostname" 
 
+echo "--- habilitar mod-rewrite do apache ---"
+sleep 3 
+sudo a2enmod rewrite
+echo "--- habilitar hostname ---"
+sleep 3 
+sudo a2ensite "$hostname" 
+echo "--- habilitar mod-rewrite do apache ---"
+sleep 3 
+sudo service apache2 reload
+echo "--- Configurando host no ubuntu ---"
+sleep 3 
+sudo echo 127.0.1.7 laravel.dev >>/etc/hosts
+#composer show laravel/framework
+
+
+elif [ "$programas" = "11" ];
+then 
+   echo "Reniciando Apache"
+   sleep 3 
+   sudo /etc/init.d/apache2 restart
 fi
 
 ####LOOP E VOLTA AO MENU#####
